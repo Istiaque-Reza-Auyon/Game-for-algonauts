@@ -8,7 +8,6 @@ interface GameProps {
 
 const Game: React.FC<GameProps> = ({ setGameScene }) => {
     const gameRef = useRef<Phaser.Game | null>(null);
-    const gameSceneRef = useRef<GameScene | null>(null);
 
     useEffect(() => {
         const config: Phaser.Types.Core.GameConfig = {
@@ -27,19 +26,12 @@ const Game: React.FC<GameProps> = ({ setGameScene }) => {
 
         const game = new Phaser.Game(config);
         gameRef.current = game;
-        // game.scene.start(new GameScene());
-        // Listen for when the scene is created
+        
         game.events.on('ready', () => {
             const gameSceneInstance = game.scene.getScene('game-scene') as GameScene;
-            console.log(gameSceneInstance, 'gameSceneInstance');
             setGameScene(gameSceneInstance);
         });
-        // game.scene.scenes[0].events.once('create', () => {
-        //     const gameSceneInstance = game.scene.scenes[0];
-        //     console.log(gameSceneInstance, 'gameSceneInstance');
-        //     setGameScene(gameSceneInstance);
-        // });
-
+        
         return () => {
             game.destroy(true);
         };
