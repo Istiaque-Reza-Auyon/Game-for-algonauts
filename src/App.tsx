@@ -2,9 +2,10 @@ import type { OnConnect } from "reactflow";
 import Move from "./components/Move";
 import LinkedList from "./utils/LinkedList";
 import Game from "./game/Game1";
+import { GameScene } from "./utils/gameScene";
 
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Background,
   Controls,
@@ -35,48 +36,53 @@ export default function App() {
   const pixelDistance = 5;
   const chain = () => { const a = new LinkedList(); return a };
   const [movementChain, setMovementChain] = useState(chain());
+  const [gameScene, setGameScene] = useState<GameScene | null>(null);
 
-  const destinationArray = [[105, 50], [105, 55], [100, 55], [100, 50]];
+  // const destinationArray = [[105, 50], [105, 55], [100, 55], [100, 50]];
 
-  const move = useCallback((direction: string, counter: number) => {
+  // const move = useCallback((direction: string, counter: number) => {
 
-    switch (direction) {
-      // adding logic here to prevent div from leaving the area.
-      // reddit comment
-      case "up":
-        destinationArray[counter][0] === top - pixelDistance ? setTop((top) => (top - pixelDistance >= 5 ? top - pixelDistance : 0)) : setTop(top);
-        // for (let i = 0; i < 50; i += 1) {
-        //   setTop(top - 1);
-        // }
-        break;
-      case "down":
-        destinationArray[counter][0] === top + pixelDistance ? setTop((top) =>
-          top + pixelDistance <= 275 ? top + pixelDistance : 275
-        ) : setTop(top);
-        break;
-      case "left":
-        destinationArray[counter][1] === left - pixelDistance ? setLeft((left) =>
-          left - pixelDistance >= 5 ? left - pixelDistance : 0
-        ) : setLeft(left);
-        break;
-      default:
-        destinationArray[counter][1] === left + pixelDistance ? setLeft((left) =>
-          left + pixelDistance <= 275 ? left + pixelDistance : 275
-        ) : setLeft(left);
-        break;
+  //   switch (direction) {
+  //     // adding logic here to prevent div from leaving the area.
+  //     // reddit comment
+  //     case "up":
+  //       destinationArray[counter][0] === top - pixelDistance ? setTop((top) => (top - pixelDistance >= 5 ? top - pixelDistance : 0)) : setTop(top);
+  //       // for (let i = 0; i < 50; i += 1) {
+  //       //   setTop(top - 1);
+  //       // }
+  //       break;
+  //     case "down":
+  //       destinationArray[counter][0] === top + pixelDistance ? setTop((top) =>
+  //         top + pixelDistance <= 275 ? top + pixelDistance : 275
+  //       ) : setTop(top);
+  //       break;
+  //     case "left":
+  //       destinationArray[counter][1] === left - pixelDistance ? setLeft((left) =>
+  //         left - pixelDistance >= 5 ? left - pixelDistance : 0
+  //       ) : setLeft(left);
+  //       break;
+  //     default:
+  //       destinationArray[counter][1] === left + pixelDistance ? setLeft((left) =>
+  //         left + pixelDistance <= 275 ? left + pixelDistance : 275
+  //       ) : setLeft(left);
+  //       break;
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    if (gameScene !== null) {
+      console.log("gameScene initialized", gameScene);
     }
-  }, []);
+  }, [gameScene]);
 
 
-  function traverseMovementChain(movementChain: any) {
+  function traverseMovementChain(movementChain: any, gameScene: GameScene) {
     let startNode = movementChain.head;
-    let counter = -1;
     const moveWithDelay = (node: any) => {
       if (!node) return; // Base case: no more nodes to process
 
       const direction = node.value;
-      counter++;
-      move(direction, counter); // Move the div
+      gameScene.movePlayer(direction); // Move the player sprite
 
       // Delay the next move 
       setTimeout(() => {
@@ -101,7 +107,11 @@ export default function App() {
       startNode = edges.find(edge => edge.source == startNode?.target);
       startNode ? setMovementChain(movementChain.addToTail(startNode?.target)) : setMovementChain(movementChain);
     };
-    traverseMovementChain(movementChain);
+    if (gameScene) {
+      traverseMovementChain(movementChain, gameScene);
+    } else {
+      console.warn('gameScene is not initialized');
+    }
   }
 
   return (
@@ -123,7 +133,8 @@ export default function App() {
       <button className="" onClick={seeEdges}>see</button>
       {/* <FaUserAstronaut style={{color:'blue'}}/> */}
       {/* <Move top={top} left={left} /> */}
-      <Game />
+      <Game setGameScene={setGameScene} />
+
     </>
   );
 }

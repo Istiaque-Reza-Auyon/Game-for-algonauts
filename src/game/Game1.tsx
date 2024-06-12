@@ -1,108 +1,14 @@
 import React, { useEffect, useRef } from 'react';
+import { GameScene } from '../utils/gameScene.ts';
 import Phaser from 'phaser';
 
-class GameScene extends Phaser.Scene {
-    private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    private ground: Phaser.Physics.Arcade.StaticGroup;
-
-    constructor() {
-        super('game-scene');
-    }
-
-    preload() {
-        // Load assets here
-        this.load.image('sky', 'assets/sky.png');
-        this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-    }
-
-    create() {
-        this.ground = this.physics.add.staticGroup();
-        this.ground.create(300, 200, 'sky').setScale(4).refreshBody(); // Adjust scale as needed
-    
-        this.player = this.physics.add.sprite(100, 450, 'dude');
-        this.physics.add.collider(this.player, this.ground); // Enable collision between player and ground
-    
-        // this.player.setBounce(0.2);
-        this.player.setCollideWorldBounds(true);
-
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'up',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'down',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.cursors = this.input.keyboard.createCursorKeys();
-
-    }
-
-    update() {
-        // Update game logic here
-        if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-160);
-
-            this.player.anims.play('left', true);
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(160);
-
-            this.player.anims.play('right', true);
-        }
-        else if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-160);
-
-            this.player.anims.play('up', true);
-        }
-        else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(160);
-
-            this.player.anims.play('down', true);
-        }
-        else {
-            this.player.setVelocityX(0);
-            this.player.setVelocityY(0);
-
-            this.player.anims.play('turn');
-        }
-
-        // if (this.cursors.up.isDown && this.player.body.touching.down)
-        // {
-        //     this.player.setVelocityY(-330);
-        // }
-
-        
-    }
+interface GameProps {
+    setGameScene: (gameScene: GameScene) => void;
 }
 
-const Game: React.FC = () => {
+const Game: React.FC<GameProps> = ({ setGameScene }) => {
     const gameRef = useRef<Phaser.Game | null>(null);
+    const gameSceneRef = useRef<GameScene | null>(null);
 
     useEffect(() => {
         const config: Phaser.Types.Core.GameConfig = {
@@ -113,7 +19,6 @@ const Game: React.FC = () => {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    //   gravity: { y: 300 },
                     debug: false
                 }
             },
@@ -122,6 +27,18 @@ const Game: React.FC = () => {
 
         const game = new Phaser.Game(config);
         gameRef.current = game;
+        // game.scene.start(new GameScene());
+        // Listen for when the scene is created
+        game.events.on('ready', () => {
+            const gameSceneInstance = game.scene.getScene('game-scene') as GameScene;
+            console.log(gameSceneInstance, 'gameSceneInstance');
+            setGameScene(gameSceneInstance);
+        });
+        // game.scene.scenes[0].events.once('create', () => {
+        //     const gameSceneInstance = game.scene.scenes[0];
+        //     console.log(gameSceneInstance, 'gameSceneInstance');
+        //     setGameScene(gameSceneInstance);
+        // });
 
         return () => {
             game.destroy(true);
