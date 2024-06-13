@@ -12,8 +12,8 @@ const Game: React.FC<GameProps> = ({ setGameScene }) => {
     useEffect(() => {
         const config: Phaser.Types.Core.GameConfig = {
             type: Phaser.AUTO,
-            width: 600,
-            height: 400,
+            width: 492,
+            height: 448,
             scene: [GameScene],
             physics: {
                 default: 'arcade',
