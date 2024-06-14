@@ -1,6 +1,7 @@
 import type { Node, NodeTypes } from "reactflow";
 import { PositionLoggerNode } from "./PositionLoggerNode";
 import TextUpdaterNode from "../textUpdaterNode";
+import ForNode from "./ForNode";
 
 export const initialNodes = [
   { id: "right", type: "textUpdater", position: { x: 0, y: 0 }, data: { label: "move right" } },
@@ -27,6 +28,7 @@ export const initialNodes = [
 
 export const nodeTypes = {
   "position-logger": PositionLoggerNode,
- "textUpdater": TextUpdaterNode 
+ "textUpdater": TextUpdaterNode, 
+ "forNode": ForNode
   // Add any of your custom nodes here!
 } satisfies NodeTypes;
