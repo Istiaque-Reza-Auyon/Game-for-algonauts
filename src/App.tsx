@@ -49,7 +49,7 @@ export default function App() {
       if (parentIndex === -1) return;
     }
 
-    const newNode = { id: `${nodes.length + 1}`, data: { label: dir === 'for' ? 'for' : `move ${dir}`, parentId, dir }, position: parentId ? { x: 0, y: 0 } : { x: 200, y: 200 }, type: dir === 'for' ? 'forNode' : 'textUpdater' };
+    const newNode = { id: `${nodes.length + 1}`, data: { label: dir === 'for' ? 'for' : `${dir}`, parentId, dir }, position: parentId ? { x: 0, y: 0 } : { x: 200, y: 200 }, type: dir === 'for' ? 'forNode' : 'textUpdater' };
     setNodes((nds) => [...nds, newNode]);
   };
 
@@ -117,7 +117,7 @@ export default function App() {
           <button className='toolbar-btn' onClick={() => addNode('right')}>+ Right</button>
           <button className='toolbar-btn' onClick={() => addNode('left')}>+ Left</button>
           <button className='toolbar-btn' onClick={() => addNode('down')}>+ Down</button>
-          <button className='toolbar-btn' onClick={() => addNode('up')}>+ Up</button>
+          <button className='toolbar-btn' onClick={() => addNode('turn')}>+ Turn</button>
           <button className='toolbar-btn' onClick={() => addNode('for')}>+ For</button>
         </div>
       </div>
