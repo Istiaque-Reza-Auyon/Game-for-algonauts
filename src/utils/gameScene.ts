@@ -96,7 +96,7 @@ export class GameScene extends Phaser.Scene {
                 const targetAngle = this.player.rotation;
                 console.log(targetAngle)
                 let vx = Math.cos(targetAngle) * moveSpeed;
-                let vy = Math.sin(targetAngle) * moveSpeed;
+                let vy = Math.sin(targetAngle)* moveSpeed;
                 this.player.setVelocity(vx, vy);
                 this.player.play('move');
                 setTimeout(() => {
@@ -111,7 +111,7 @@ export class GameScene extends Phaser.Scene {
                 //     this.player.setVelocityY(0);
                 //     this.player.anims.play('turn');
                 // }, 1000);
-                const currentAngle = this.player.angle
+                const currentAngle = Math.ceil(this.player.angle);
                 console.log(currentAngle)
                 this.tweens.add({
                     targets: this.player,
