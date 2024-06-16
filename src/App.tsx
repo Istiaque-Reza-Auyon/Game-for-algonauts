@@ -50,7 +50,6 @@ export default function App() {
     }
 
     const newNode = { id: `${nodes.length + 1}`, parentNode: parentId, data: { label: dir === 'for' ? 'for' : `${dir}`, dir }, position: parentId ? { x: 10, y: 10 } : { x: 0, y: 0 }, type: dir === 'for' ? 'forNode' : 'textUpdater', ...(parentId ? { extent: 'parent' } : {}) };
-    console.log(newNode, 'new')
     setNodes((nds) => [...nds, newNode]);
   };
 
@@ -70,24 +69,28 @@ export default function App() {
     };
     moveWithDelay(startNode);
   }
+  console.log(edges, 'global')
+  console.log(nodes, 'global')
 
   function seeEdges() {
     setMovementChain(null);
 
     let startEdge = edges.find(edge => edge.source == 'start');
     let index = edges.findIndex(edge => edge.source == 'start');
-    let startNode = getNode(startEdge?.target)
+    let startNode = getNode(startEdge?.target);
+
+    console.log(edges, 'before');
 
     if (startNode && startNode?.type === 'forNode') {
       let startEdgeInForNode: Edge<any> | undefined, startNodeInForNode, indexInForNode = [];
       for (let i = 1; i <= startNode?.data.times; i++) {
-        startEdgeInForNode = edges.find(edge => edge.source == startEdge?.target);
-        if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdge?.target));
+        startEdgeInForNode = edges.find(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a');
+        if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a'));
         startNodeInForNode = getNode(startEdgeInForNode?.target);
         for (let j = 1; j <= startNodeInForNode?.data.times; j++) {
           setMovementChain(movementChain.addToHead(startNodeInForNode?.data.dir))
         }
-        while (startEdgeInForNode) {
+        while (startEdgeInForNode?.targetHandle !== 'b') {
           startEdgeInForNode = edges.find(edge => edge.source == startEdgeInForNode?.target);
           if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdgeInForNode?.target));
           startNodeInForNode = getNode(startEdgeInForNode?.target);
@@ -97,7 +100,11 @@ export default function App() {
             }
           }
         }
-        if (i == startNode?.data.times) indexInForNode.forEach(index => edges.splice(index, 1));
+        let counter = 0;
+        if (i == startNode?.data.times) indexInForNode.forEach(index =>{
+           edges.splice(index-counter, 1)
+           counter++
+          });
       }
     } else if (startNode) {
       for (let i = 1; i <= startNode?.data.times; i++) {
@@ -105,15 +112,56 @@ export default function App() {
       }
     } else setMovementChain(movementChain);
 
-    console.log(startNode);
-    while (edges.length > 0) {
+    // let trueEdges = nodes.reduce((count, node) => node.parentNode ? count + 1 : count, 0); 
+
+    console.log(edges, 'after')
+
+    while(edges.length>0) {
       edges.splice(index, 1);
       index = edges.findIndex(edge => edge.source == startEdge?.target);
       startEdge = edges.find(edge => edge.source == startEdge?.target);
+      console.log(startEdge);
+      
       let startNode = getNode(startEdge?.target);
 
+      console.log(startNode, 'startNode')
 
-      if (startNode) {
+
+      // if (startNode) {
+      //   for (let i = 1; i <= startNode?.data.times; i++) {
+      //     setMovementChain(movementChain.addToTail(startNode?.data.dir))
+      //   }
+      // } else setMovementChain(movementChain);
+
+      if (startNode && startNode?.type === 'forNode') {
+        let startEdgeInForNode: Edge<any> | undefined, startNodeInForNode, indexInForNode = [];
+        for (let i = 1; i <= startNode?.data.times; i++) {
+          startEdgeInForNode = edges.find(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a');
+          if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a'));
+          console.log(startEdgeInForNode, 'startEdgeInforNode')
+          startNodeInForNode = getNode(startEdgeInForNode?.target);
+          for (let j = 1; j <= startNodeInForNode?.data.times; j++) {
+            setMovementChain(movementChain.addToTail(startNodeInForNode?.data.dir))
+          }
+          while (startEdgeInForNode?.targetHandle !== 'b') {
+            startEdgeInForNode = edges.find(edge => edge.source == startEdgeInForNode?.target);
+            console.log(startEdgeInForNode, 'inside while loop');
+            
+            if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdgeInForNode?.target));
+            startNodeInForNode = getNode(startEdgeInForNode?.target);
+            if (startNodeInForNode) {
+              for (let k = 1; k <= startNodeInForNode?.data.times; k++) {
+                setMovementChain(movementChain.addToTail(startNodeInForNode?.data.dir))
+              }
+            }
+          }
+          let counter = 0;
+          if (i == startNode?.data.times) indexInForNode.forEach(index => {
+            edges.splice(index-counter, 1);
+            counter++;
+          });
+        }
+      } else if (startNode) {
         for (let i = 1; i <= startNode?.data.times; i++) {
           setMovementChain(movementChain.addToTail(startNode?.data.dir))
         }
@@ -125,10 +173,6 @@ export default function App() {
       console.warn('gameScene is not initialized');
     }
   }
-
-
-  console.log(nodes);
-  console.log(edges);
 
 
   return (

@@ -15,13 +15,11 @@ function ForNode({ id, data, selected }: {
 }) {
 
   const ctx = useContext(FlowContext);
-  console.log(ctx.nodes);
-  
 
   const numOfChild = ctx.nodes.reduce((count, node) => node.parentNode == id ? count + 1 : count, 0); 
 
   return (
-    <div className={"bg-green-500 relative"} style={{ height: `${(numOfChild * 10) + 6}rem`, width: 'auto' }}>
+    <div className={"bg-white relative"} style={{ height: `${(numOfChild * 10) + 6}rem`, width: 'auto' }}>
       <div className='flex'>
         <div className='node-icon flex-center'><img src={loop} /></div>
         <div className='flex-grow'>
@@ -46,8 +44,10 @@ function ForNode({ id, data, selected }: {
         <div className="close-btn-container"><img className="close-btn" src={close}  onClick={() => ctx.removeNode(id)} /></div>
       </div>
 
-      <Handle type="target" position={Position.Top} />
-      <Handle type="source" position={Position.Top} />
+      <Handle type="target" position={Position.Top} id="a" />
+      <Handle type="source" position={Position.Top} id="a"/> 
+      <Handle type="target" position={Position.Bottom} id="b"/>
+      <Handle type="source" position={Position.Bottom} id="b"/>
     </div>
   )
 }
