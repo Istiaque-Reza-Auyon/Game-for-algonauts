@@ -15,11 +15,13 @@ function ForNode({ id, data, selected }: {
 }) {
 
   const ctx = useContext(FlowContext);
+  console.log(ctx.nodes);
+  
 
-//   const numOfChild = ctx.nodes.reduce((count, node) => node.parentId == id ? count + 1 : count, 0);
+  const numOfChild = ctx.nodes.reduce((count, node) => node.parentNode == id ? count + 1 : count, 0); 
 
   return (
-    <div className={"base-node for-node bg-[rgb(244,209,255)]" + (selected ? "selected-node" : "")} style={{ height: `${(1 * 6) + 6}rem`, width: (350 - (20 * data.level)) }}>
+    <div className={"bg-green-500 relative"} style={{ height: `${(numOfChild * 10) + 6}rem`, width: 'auto' }}>
       <div className='flex'>
         <div className='node-icon flex-center'><img src={loop} /></div>
         <div className='flex-grow'>
@@ -30,10 +32,10 @@ function ForNode({ id, data, selected }: {
           </div>
           
             {<div className="for-btn-container">
-              <button onClick={() => ctx.addNode('right')}>+ move right</button>
-              <button onClick={() => ctx.addNode('left')}>+ move left</button>
-              <button onClick={() => ctx.addNode('up')}>+ move up</button>
-              <button onClick={() => ctx.addNode('down')}>+ move down</button>
+              <button onClick={() => ctx.addNode('move', id)}>+ Move</button>
+              <button onClick={() => ctx.addNode('turn', id)}>+ Turn</button>
+              {/* <button onClick={() => ctx.addNode('up')}>+ move up</button>
+              <button onClick={() => ctx.addNode('down')}>+ move down</button> */}
               { data.level < 2 &&
                 <button onClick={() => ctx.addNode('for', id)}>+ For</button>
               }
@@ -45,7 +47,7 @@ function ForNode({ id, data, selected }: {
       </div>
 
       <Handle type="target" position={Position.Top} />
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Top} />
     </div>
   )
 }

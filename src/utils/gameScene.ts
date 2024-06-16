@@ -40,12 +40,12 @@ export class GameScene extends Phaser.Scene {
 
         this.player.setCollideWorldBounds(true);
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 3, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
+        // this.anims.create({
+        //     key: 'left',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 3, end: 3 }),
+        //     frameRate: 10,
+        //     repeat: -1
+        // });
 
         this.anims.create({
             key: 'turn',
@@ -54,25 +54,25 @@ export class GameScene extends Phaser.Scene {
         });
 
         this.anims.create({
-            key: 'right',
+            key: 'move',
             frames: this.anims.generateFrameNumbers('dude', { start: 6, end: 6 }),
             frameRate: 10,
             repeat: -1
         });
 
-        this.anims.create({
-            key: 'up',
-            frames: this.anims.generateFrameNumbers('dude', { start: 9, end: 9 }),
-            frameRate: 10,
-            repeat: -1
-        });
+        // this.anims.create({
+        //     key: 'up',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 9, end: 9 }),
+        //     frameRate: 10,
+        //     repeat: -1
+        // });
 
-        this.anims.create({
-            key: 'down',
-            frames: this.anims.generateFrameNumbers('dude', { start: 9, end: 9 }),
-            frameRate: 10,
-            repeat: -1
-        });
+        // this.anims.create({
+        //     key: 'down',
+        //     frames: this.anims.generateFrameNumbers('dude', { start: 9, end: 9 }),
+        //     frameRate: 10,
+        //     repeat: -1
+        // });
     }
 
     update() {
@@ -83,22 +83,22 @@ export class GameScene extends Phaser.Scene {
         const moveSpeed = 100; // Adjust the move speed as needed
 
         switch (direction.toLowerCase()) {
-            case 'left':
-                this.player.setVelocityX(-moveSpeed);
-                this.player.anims.play('left', true);
-                setTimeout(() => {
-                    this.player.setVelocityX(0);
-                    this.player.anims.play('turn');
-                }, 1000);
-                break;
-            case 'right':
+            // case 'left':
+            //     this.player.setVelocityX(-moveSpeed);
+            //     this.player.anims.play('left', true);
+            //     setTimeout(() => {
+            //         this.player.setVelocityX(0);
+            //         this.player.anims.play('turn');
+            //     }, 1000);
+            //     break;
+            case 'move':
                 // this.player.setVelocityX(moveSpeed);
                 const targetAngle = this.player.rotation;
                 console.log(targetAngle)
                 let vx = Math.cos(targetAngle) * moveSpeed;
                 let vy = Math.sin(targetAngle) * moveSpeed;
                 this.player.setVelocity(vx, vy);
-                this.player.play('right');
+                this.player.play('move');
                 setTimeout(() => {
                     this.player.setVelocity(0,0);
                     this.player.anims.play('turn');
@@ -120,24 +120,24 @@ export class GameScene extends Phaser.Scene {
                     ease: 'Linear'
                 });
                 break;
-            case 'down':
-                this.player.setVelocityY(moveSpeed);
-                this.player.anims.play('down', true);
-                setTimeout(() => {
-                    this.player.setVelocityY(0);
-                    this.player.anims.play('turn');
-                }, 1000);
-                break;
-            case 'stop':
-                this.player.setVelocityX(0);
-                this.player.setVelocityY(0);
-                this.player.anims.play('turn');
-                break;
-            default:
-                this.player.setVelocityX(0);
-                this.player.setVelocityY(0);
-                this.player.anims.play('turn');
-                break;
+            // case 'down':
+            //     this.player.setVelocityY(moveSpeed);
+            //     this.player.anims.play('down', true);
+            //     setTimeout(() => {
+            //         this.player.setVelocityY(0);
+            //         this.player.anims.play('turn');
+            //     }, 1000);
+            //     break;
+            // case 'stop':
+            //     this.player.setVelocityX(0);
+            //     this.player.setVelocityY(0);
+            //     this.player.anims.play('turn');
+            //     break;
+            // default:
+            //     this.player.setVelocityX(0);
+            //     this.player.setVelocityY(0);
+            //     this.player.anims.play('turn');
+            //     break;
         }
     }
 }

@@ -1,4 +1,4 @@
-import type { OnConnect } from "reactflow";
+import type { Edge, OnConnect } from "reactflow";
 import LinkedList from "./utils/LinkedList";
 import Game from "./game/Game1";
 import { GameScene } from "./utils/gameScene";
@@ -49,7 +49,8 @@ export default function App() {
       if (parentIndex === -1) return;
     }
 
-    const newNode = { id: `${nodes.length + 1}`, data: { label: dir === 'for' ? 'for' : `${dir}`, parentId, dir }, position: parentId ? { x: 0, y: 0 } : { x: 200, y: 200 }, type: dir === 'for' ? 'forNode' : 'textUpdater' };
+    const newNode = { id: `${nodes.length + 1}`, parentNode: parentId, data: { label: dir === 'for' ? 'for' : `${dir}`, dir }, position: parentId ? { x: 10, y: 10 } : { x: 0, y: 0 }, type: dir === 'for' ? 'forNode' : 'textUpdater', ...( parentId? {extent: 'parent'} : {}) };
+    console.log(newNode, 'new')
     setNodes((nds) => [...nds, newNode]);
   };
 
@@ -76,6 +77,29 @@ export default function App() {
     let startEdge = edges.find(edge => edge.source == 'start');
     let index = edges.findIndex(edge => edge.source == 'start');
     let startNode = getNode(startEdge?.target)
+
+    if(startNode && startNode?.type === 'forNode') {
+      let startEdgeInForNode: Edge<any> | undefined, startNodeInForNode, indexInForNode = [];
+      for (let i = 1; i<= startNode?.data.times; i++) {
+        startEdgeInForNode =  edges.find(edge => edge.source == startEdge?.target);
+        if(i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdge?.target));
+        startNodeInForNode =  getNode(startEdgeInForNode?.target);
+        for (let j = 1; j <= startNodeInForNode?.data.times; j++) {
+          setMovementChain(movementChain.addToHead(startNodeInForNode?.data.dir))
+        }
+        while (startEdgeInForNode) {
+          startEdgeInForNode =  edges.find(edge => edge.source == startEdgeInForNode?.target);
+          if(i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdgeInForNode?.target));
+          startNodeInForNode =  getNode(startEdgeInForNode?.target);
+          if (startNodeInForNode) {
+            for (let k = 1; k <= startNodeInForNode?.data.times; k++) {
+              setMovementChain(movementChain.addToTail(startNodeInForNode?.data.dir))
+            }
+        }
+      }
+      if(i == startNode?.data.times) indexInForNode.forEach(index => edges.splice(index, 1));
+    }
+  }
 
     if (startNode) {
       for (let i = 1; i <= startNode?.data.times; i++) {
@@ -104,19 +128,25 @@ export default function App() {
     }
   }
 
+
+  console.log(nodes);
+  console.log(edges);
+  
+  
   return (
     <FlowContext.Provider
       value={{
         onNodesChange,
         onEdgesChange,
         addNode,
+        nodes
       }}
     >
       <div className='editor-container'>
         <div className='toolbar'>
-          <button className='toolbar-btn' onClick={() => addNode('right')}>+ Right</button>
-          <button className='toolbar-btn' onClick={() => addNode('left')}>+ Left</button>
-          <button className='toolbar-btn' onClick={() => addNode('down')}>+ Down</button>
+          <button className='toolbar-btn' onClick={() => addNode('move')}>+ Move</button>
+          {/* <button className='toolbar-btn' onClick={() => addNode('left')}>+ Left</button>
+          <button className='toolbar-btn' onClick={() => addNode('down')}>+ Down</button> */}
           <button className='toolbar-btn' onClick={() => addNode('turn')}>+ Turn</button>
           <button className='toolbar-btn' onClick={() => addNode('for')}>+ For</button>
         </div>
@@ -139,3 +169,4 @@ export default function App() {
     </FlowContext.Provider>
   );
 }
+
