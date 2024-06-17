@@ -19,7 +19,7 @@ function ForNode({ id, data, selected }: {
   const numOfChild = ctx.nodes.reduce((count, node) => node.parentNode == id ? count + 1 : count, 0); 
 
   return (
-    <div className={"bg-white relative"} style={{ height: `${(numOfChild * 10) + 6}rem`, width: 'auto' }}>
+    <div className={" relative"} style={{ height: `${(numOfChild * 10) + 6}rem`, width: 'auto' }}>
       <div className='flex'>
         <div className='node-icon flex-center'><img src={loop} /></div>
         <div className='flex-grow'>
