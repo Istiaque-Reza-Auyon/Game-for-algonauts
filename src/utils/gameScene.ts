@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 
 export class GameScene extends Phaser.Scene {
-    private player: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    private ground: Phaser.Physics.Arcade.StaticGroup;
-    private blackhole1: Phaser.Physics.Arcade.StaticGroup;
-    private blackhole2: Phaser.Physics.Arcade.StaticGroup;
-    private moon: Phaser.Physics.Arcade.StaticGroup;
+    private player!: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    private ground!: Phaser.Physics.Arcade.StaticGroup;
+    private blackhole1!: Phaser.Physics.Arcade.StaticGroup;
+    private blackhole2!: Phaser.Physics.Arcade.StaticGroup;
+    private moon!: Phaser.Physics.Arcade.StaticGroup;
 
 
     constructor() {
@@ -22,7 +22,7 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.ground = this.physics.add.staticGroup();
-        this.ground.create(0, 0, 'sky').setOrigin(0, 0).setScale(1).refreshBody(); // Adjust scale as needed
+        this.ground.create(0, 0, 'sky').setOrigin(0, 0).setScale(1).refreshBody(); 
 
         this.blackhole1 = this.physics.add.staticGroup();
         this.blackhole1.create(0, 200, 'blackhole1').setOrigin(0, 0);
@@ -34,9 +34,9 @@ export class GameScene extends Phaser.Scene {
         this.moon.create(300, 200, 'moon').setOrigin(0, 0);
 
         this.player = this.physics.add.sprite(50, 398, 'dude');
-        this.physics.add.collider(this.player, this.ground); // Enable collision between player and ground
-        // this.physics.add.collider(this.player, this.blackhole1);
-        // this.physics.add.collider(this.player, this.blackhole2);
+        this.physics.add.collider(this.player, this.ground); 
+        this.physics.add.collider(this.player, this.blackhole1);
+        this.physics.add.collider(this.player, this.blackhole2);
 
         this.player.setCollideWorldBounds(true);
 
@@ -59,7 +59,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     movePlayer(direction: string) {
-        const moveSpeed = 100; // Adjust the move speed as needed
+        const moveSpeed = 100; 
 
         switch (direction.toLowerCase()) {
             case 'move':
@@ -74,11 +74,11 @@ export class GameScene extends Phaser.Scene {
                 }, 1000);
                 break;
             case 'turn':
-                const currentAngle = this.player.angle <0 ? Math.floor(this.player.angle) : Math.ceil(this.player.angle);
+                const currentAngle = this.player.angle 
                 this.tweens.add({
                     targets: this.player,
                     angle: currentAngle<0 ? Math.floor(currentAngle+90) : Math.ceil(currentAngle + 90),
-                    duration: 1000, // milliseconds
+                    duration: 800, 
                     ease: 'Linear'
                 });
                 break;

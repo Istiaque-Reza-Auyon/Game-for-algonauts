@@ -56,7 +56,7 @@ export default function App() {
       // Delay the next move 
       setTimeout(() => {
         moveWithDelay(node.next);
-      }, 1000);
+      }, 1050);
     };
     moveWithDelay(startNode);
   }
