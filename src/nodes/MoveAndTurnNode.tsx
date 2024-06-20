@@ -1,13 +1,7 @@
-import React from 'react';
-import { useCallback } from 'react';
 import { Handle, Position } from 'reactflow';
 
-const handleStyle = { left: 10 };
 
-export default function TextUpdaterNode({ data }) {
-  const onChange = useCallback((evt: any) => {
-    console.log(evt.target.value);
-  }, []);
+export default function MoveAndTurnNode({ data } : {data : {times : number, label: string}}) {
 
   return (
     <>

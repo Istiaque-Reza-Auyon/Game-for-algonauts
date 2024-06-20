@@ -1,16 +1,16 @@
-function LinkedList () {
+function LinkedList (this: any) {
     this.head = null;
     this.tail = null;
   }
   
-  function NodeOfLL (value) {
+  function NodeOfLL (this: any, value: any) {
     this.value = value;
     this.next = null;
   }
   
   
   LinkedList.prototype.addToHead = function (value:any) {
-    const newNode = new NodeOfLL(value);
+    const newNode = new (NodeOfLL as any)(value);
   
     if (!this.head) this.head = this.tail = newNode;
     else {
@@ -21,8 +21,8 @@ function LinkedList () {
     return true;
   }
   
-  LinkedList.prototype.addToTail = function (value) {
-    const newNode = new NodeOfLL(value);
+  LinkedList.prototype.addToTail = function (value: any) {
+    const newNode = new(NodeOfLL as any)(value);
   
     if (!this.tail) this.head = this.tail = newNode;
     else {
@@ -42,7 +42,7 @@ function LinkedList () {
     return prevHead.value;
   }
   
-  LinkedList.prototype.contains = function (value) {
+  LinkedList.prototype.contains = function (value: any) {
     let current = this.head;
     while (current) {
       if (current.value === value) return true;

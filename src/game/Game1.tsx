@@ -18,7 +18,7 @@ const Game: React.FC<GameProps> = ({ setGameScene }) => {
             physics: {
                 default: 'arcade',
                 arcade: {
-                    debug: true
+                    debug: false
                 }
             },
             parent: 'game-container', // Ensure the parent is set

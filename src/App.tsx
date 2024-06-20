@@ -14,24 +14,24 @@ import {
   useReactFlow,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { nodeTypes } from "./nodes";
-import { initialEdges, edgeTypes } from "./edges";
+import { initialNodes,nodeTypes } from "./nodes";
+import type { Node } from "reactflow";
+import { edgeTypes } from "./edges";
+import { traverseMovementChain } from "./utils/traverseMovementChain";
 
 
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([{
-    id: 'start',
-    type: 'textUpdater',
-    position: { x: 0, y: 0 },
-    data: { label: 'start' },
-  }]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const { getNode } = useReactFlow();
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
     [setEdges]
   );
-  const chain = () => { const a = new LinkedList(); return a };
+  const chain = () => { 
+    const a = new (LinkedList as any)(); 
+    return a 
+  };
   const [movementChain, setMovementChain] = useState(chain());
   const [gameScene, setGameScene] = useState<GameScene | null>(null);
 
@@ -41,43 +41,26 @@ export default function App() {
       if (parentIndex === -1) return;
     }
     const newNode = { id: `${nodes.length + 1}`, parentNode: parentId, data: { label: dir === 'for' ? 'for' : `${dir}`, dir }, position: parentId ? { x: 10, y: 10 } : { x: 0, y: 0 }, type: dir === 'for' ? 'forNode' : 'textUpdater', ...(parentId ? { extent: 'parent' } : {}) };
-    setNodes((nds) => [...nds, newNode]);
+    setNodes((nds) => [...nds, newNode as Node]);
   };
 
-  function traverseMovementChain(movementChain: any, gameScene: GameScene) {
-    let startNode = movementChain.head;
-    
-    const moveWithDelay = (node: any) => {
-      if (!node) return; // Base case: no more nodes to process
-
-      const direction = node.value;
-      gameScene.movePlayer(direction); // Move the player sprite
-
-      // Delay the next move 
-      setTimeout(() => {
-        moveWithDelay(node.next);
-      }, 1050);
-    };
-    moveWithDelay(startNode);
-  }
-
-  function seeEdges() {
+  function moveSprite() {
     let startEdge = edges.find(edge => edge.source == 'start');
     let index = edges.findIndex(edge => edge.source == 'start');
-    let startNode = getNode(startEdge?.target);
+    let startNode = getNode(startEdge?.target as string);
 
     if (startNode && startNode?.type === 'forNode') {
       let startEdgeInForNode: Edge<any> | undefined, startNodeInForNode, indexInForNode = [];
       for (let i = 1; i <= startNode?.data.times; i++) {
         startEdgeInForNode = edges.find(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a');
         if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a'));
-        startNodeInForNode = getNode(startEdgeInForNode?.target);
+        startNodeInForNode = getNode(startEdgeInForNode?.target as string);
         for (let j = 1; j <= startNodeInForNode?.data.times; j++) {
           i==1? setMovementChain(movementChain.addToHead(startNodeInForNode?.data.dir)): setMovementChain(movementChain.addToTail(startNodeInForNode?.data.dir))
         }
         while (startEdgeInForNode?.targetHandle !== 'b') {
           startEdgeInForNode = edges.find(edge => edge.source == startEdgeInForNode?.target && edge.sourceHandle == 'a');
-          startNodeInForNode = getNode(startEdgeInForNode?.target);
+          startNodeInForNode = getNode(startEdgeInForNode?.target as string);
           if (i == startNode?.data.times && startNodeInForNode?.type !== 'forNode') indexInForNode.push(edges.findIndex(edge => edge.source == startEdgeInForNode?.target && edge.sourceHandle == 'a'));
           
           if (startNodeInForNode && startNodeInForNode?.type !== 'forNode') {
@@ -104,20 +87,20 @@ export default function App() {
       edges.splice(index , 1);
       index = edges.findIndex(edge => edge.source == startEdge?.target);
       startEdge = edges.find(edge => edge.source == startEdge?.target);
-      let startNode = getNode(startEdge?.target);
+      let startNode = getNode(startEdge?.target as string);
 
       if (startNode && startNode?.type === 'forNode') {
         let startEdgeInForNode: Edge<any> | undefined, startNodeInForNode, indexInForNode = [];
         for (let i = 1; i <= startNode?.data.times; i++) {
           startEdgeInForNode = edges.find(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a');
           if (i == startNode?.data.times) indexInForNode.push(edges.findIndex(edge => edge.source == startEdge?.target && edge.sourceHandle == 'a'));
-          startNodeInForNode = getNode(startEdgeInForNode?.target);
+          startNodeInForNode = getNode(startEdgeInForNode?.target as string);
           for (let j = 1; j <= startNodeInForNode?.data.times; j++) {
             setMovementChain(movementChain.addToTail(startNodeInForNode?.data.dir))
           }
           while (startEdgeInForNode?.targetHandle !== 'b') {
             startEdgeInForNode = edges.find(edge => edge.source == startEdgeInForNode?.target);
-            startNodeInForNode = getNode(startEdgeInForNode?.target);
+            startNodeInForNode = getNode(startEdgeInForNode?.target as string);
             if (i == startNode?.data.times && startNodeInForNode?.type !== 'forNode') indexInForNode.push(edges.findIndex(edge => edge.source == startEdgeInForNode?.target));
             if (startNodeInForNode && startNodeInForNode?.type !== 'forNode') {
               for (let k = 1; k <= startNodeInForNode?.data.times; k++) {
@@ -149,8 +132,6 @@ export default function App() {
   return (
     <FlowContext.Provider
       value={{
-        onNodesChange,
-        onEdgesChange,
         addNode,
         nodes
       }}
@@ -177,7 +158,7 @@ export default function App() {
         <Background />
         <Controls />
       </ReactFlow>
-      <button className="" onClick={seeEdges}>see</button>
+      <button className="" onClick={moveSprite}>Convert</button>
       <Game setGameScene={setGameScene} />
     </FlowContext.Provider>
   );
