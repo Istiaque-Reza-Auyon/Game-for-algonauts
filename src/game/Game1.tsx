@@ -12,7 +12,8 @@ const Game: React.FC<GameProps> = ({ setGameScene }) => {
     useEffect(() => {
         const config: Phaser.Types.Core.GameConfig = {
             type: Phaser.AUTO,
-            width: 492,
+            mode: Phaser.Scale.FIT,
+            width: 800,
             height: 448,
             scene: [GameScene],
             physics: {
@@ -37,7 +38,7 @@ const Game: React.FC<GameProps> = ({ setGameScene }) => {
         };
     }, []);
 
-    return <div id="game-container" className="ml-96 pb-96" />;
+    return <div id="game-container" className="" />;
 };
 
 export default Game;

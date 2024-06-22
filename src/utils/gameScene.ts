@@ -36,7 +36,7 @@ export class GameScene extends Phaser.Scene {
         this.player = this.physics.add.sprite(50, 398, 'dude');
         this.physics.add.collider(this.player, this.ground); 
         this.physics.add.collider(this.player, this.blackhole1);
-        this.physics.add.collider(this.player, this.blackhole2);
+        // this.physics.add.collider(this.player, this.blackhole2);
 
         this.player.setCollideWorldBounds(true);
 

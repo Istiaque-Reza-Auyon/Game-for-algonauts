@@ -11,8 +11,16 @@
 html,
 body,
 #root {
-  height: 90%;
+  width: 100%;
   margin: 0;
+}
+
+.react-flow .react-flow__handle {
+  width: 30px;
+  height: 14px;
+  border-radius: 3px;
+  border-color: black;
+  background-color: #784be8;
 }
 
 
